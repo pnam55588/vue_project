@@ -1,9 +1,11 @@
 <template>
   <div class="job-list">
-    <ul>
-      <li v-for="job in jobs" :key="job.id">
+    <p>Order by {{ order }}</p>
+    <transition-group name="list" tag="ul">
+      <li v-for="job in orderedJobs" :key="job.id">
         <h2>{{ job.title }} in {{ job.location }}</h2>
         <div class="salary">
+          <img src="../assets/rupee.svg" alt="ruppess icon" />
           <p>{{ job.salary }} ruppess</p>
         </div>
         <div class="description">
@@ -15,13 +17,14 @@
           </p>
         </div>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import Job from "@/types/Job";
+import OrderTerm from "@/types/OrderTerm";
 
 export default defineComponent({
   props: {
@@ -29,38 +32,54 @@ export default defineComponent({
       required: true,
       type: Array as PropType<Job[]>,
     },
+    order: {
+      required: true,
+      type: String as PropType<OrderTerm>,
+    },
+  },
+  setup(props) {
+    const orderedJobs = computed(() => {
+      return [...props.jobs].sort((a: Job, b: Job) => {
+        return a[props.order] > b[props.order] ? 1 : -1;
+      });
+    });
+    return { orderedJobs };
   },
 });
 </script>
 
 <style scoped>
-  .job-list{
-    max-width: 960px;
-    margin: 40px auto;
-  }
-  .job-list ul{
-    padding: 0;
-  }
-  .job-list li{
-    list-style: none;
-    background: white;
-    padding: 16px;
-    margin: 16px 0;
-    border-radius: 4px;
-  }
-  .job-list h2{
-    margin: 0 0 10px;
-    text-transform: capitalize;
-  }
-  .salary {
-    display: flex;
-  }
-  .salary img{
-    width: 30px;
-  }
-  .salary p{
-    color: #17bf66;
-    margin: 0;
-    margin-left: 10px 4px;
-  }
+.job-list {
+  max-width: 960px;
+  margin: 40px auto;
+}
+.job-list ul {
+  padding: 0;
+}
+.job-list li {
+  list-style-type: none;
+  background: white;
+  padding: 16px;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+.job-list h2 {
+  margin: 0 0 10px;
+  text-transform: capitalize;
+}
+.salary {
+  display: flex;
+}
+.salary img {
+  width: 30px;
+}
+.salary p {
+  color: #17bf66;
+  margin: 0;
+  margin-left: 10px 4px;
+}
+
+.list-move {
+  transition: all 1s;
+}
 </style>
