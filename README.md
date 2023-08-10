@@ -1,5 +1,8 @@
 # my-app
-
+# link deploy
+```
+https://phnjobs.netlify.app/
+```
 ## Project setup
 ```
 npm install
